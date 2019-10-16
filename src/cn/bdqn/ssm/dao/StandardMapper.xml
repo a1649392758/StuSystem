@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.bdqn.ssm.dao.StandardMapper">
+	
+	<resultMap type="Standard" id="standardMap">
+		<id property="id" column="id"/>
+		<result property="stdNum" column="stdNum"/>
+		<result property="zhname" column="zhname"/>
+		<result property="version" column="version"/>
+		<result property="keys" column="keys"/>
+		<result property="releaseDate" column="releaseDate"/>
+		<result property="implDate" column="implDate"/>
+		<result property="packagePath" column="packagePath"/>
+	</resultMap>
+	
+	<select id="standardAllSelect" parameterType="map" resultMap="standardMap">
+		 select id,
+			stdNum,
+			zhname,
+			`version`,
+			`keys`,
+			releaseDate,
+		    implDate,
+		    packagePath	
+		from standard 
+		<where>
+			<if test="stdNum!=null and stdNum!=''">
+				and stdNum like CONCAT('%',#{stdNum},'%')
+				or zhname like CONCAT('%',#{stdNum},'%')
+			</if>
+		</where>
+		order by id
+		limit #{start},#{size}
+	</select>
+	
+	<!-- 导出excel(全查询) -->
+	<select id="standardExcelSelect" resultMap="standardMap">
+		select id,
+			stdNum,
+			zhname,
+			`version`,
+			`keys`,
+			releaseDate,
+		    implDate,
+		    packagePath	
+		from standard 
+		order by id
+	</select>
+	
+	<select id="totalCounts" parameterType="string" resultType="int">
+		select
+		count(id)
+		from standard 
+		<where>
+			<if test="stdNum!=null and stdNum!=''">
+				and stdNum like CONCAT('%',#{stdNum},'%')
+				or zhname like CONCAT('%',#{stdNum},'%')
+			</if>
+		</where>
+	</select>
+	
+	<!-- 添加方法 -->
+	<insert id="standardInsert" parameterType="Standard">
+		insert into
+		standard(stdNum,zhname,`version`,`keys`,releaseDate,implDate,packagePath)
+		values
+		(#{stdNum},#{zhname},#{version},#{keys},#{releaseDate},#{implDate},#{packagePath})
+	</insert>
+	
+	<select id="standardCheck" parameterType="string" resultType="int">
+		select count(id) from standard where stdNum=#{stdNum}
+	</select>
+	
+	<delete id="standardDelete">
+		delete from standard where id in
+		<foreach collection="list" open="(" close=")" separator="," item="ids">
+			#{ids}
+		</foreach>
+	</delete>
+	
+	<select id="standardByIdSelect" parameterType="int" resultMap="standardMap">
+		select * from standard where id=#{id}
+	</select>
+	
+	<update id="standardUpdate" parameterType="Standard">
+		update standard
+		<set>
+			<if test="stdNum!=null and stdNum!=''">
+				stdNum=#{stdNum},
+			</if>
+			<if test="zhname!=null and zhname!=''">
+				zhname=#{zhname},
+			</if>
+			<if test="version!=null and version!=''">
+				`version`=#{version},
+			</if>
+			<if test="keys!=null and keys!=''">
+				`keys`=#{keys},
+			</if>
+			<if test="releaseDate!=null">
+				releaseDate=#{releaseDate},
+			</if>
+			<if test="implDate!=null">
+				implDate=#{implDate},
+			</if>
+			<if test="packagePath!=null and packagePath!=''">
+				packagePath=#{packagePath},
+			</if>
+		</set>
+		<where>
+			<if test="id!=null">
+				id=#{id}
+			</if>
+		</where>
+	</update>
+</mapper>
+
+
+
+
+
+
+
+
+
